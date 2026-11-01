@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manda | Magical Fairy Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons for aesthetic icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDF9',
+                        powderBlue: '#D0E4F5',
+                        softPink: '#F9E0E8',
+                        vintageGold: '#D4AF37',
+                        dustyPurple: '#3A3238',
+                        warmBackground: '#F5EFE6',
+                    },
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-horizontal': 'floatSide 6s ease-in-out infinite alternate',
+                        'float-reverse': 'floatSideRev 7s ease-in-out infinite alternate',
+                        'flame-flicker': 'flicker 1.5s infinite alternate',
+                        'fly-in': 'flyIn 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards',
+                    },
+                    keyframes: {
+                        floatSide: {
+                            '0%': { transform: 'translateX(-15px) translateY(0px)' },
+                            '100%': { transform: 'translateX(15px) translateY(-10px)' },
+                        },
+                        floatSideRev: {
+                            '0%': { transform: 'translateX(20px) translateY(0px)' },
+                            '100%': { transform: 'translateX(-20px) translateY(-8px)' },
+                        },
+                        flicker: {
+                            '0%, 100%': { transform: 'scale(1) rotate(-1deg)', opacity: '0.9' },
+                            '50%': { transform: 'scale(1.08) rotate(1deg)', opacity: '1' },
+                        },
+                        flyIn: {
+                            '0%': { transform: 'translate(-120%, -120%) scale(0.6)', opacity: '0' },
+                            '100%': { transform: 'translate(0, 0) scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFFDF9;
+            color: #3A3238;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Dimmer Overlay */
+        #ambient-overlay {
+            pointer-events: none;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Smooth Candle Flame Style */
+        .candle-flame {
+            background: radial-gradient(circle at 50% 80%, #fff 0%, #ffe600 35%, #ff7700 70%, transparent 100%);
+            box-shadow: 0 0 25px #ffb700, 0 0 45px #ff7700;
+        }
+
+        .gold-border {
+            border: 2px solid #D4AF37;
+        }
+
+        .gold-glow {
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 253, 249, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFFDF9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D0E4F5;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-dustyPurple">
+
+    <!-- Ambient Darkening Overlay controlled by the Candle Dimmer Widget -->
+    <div id="ambient-overlay" class="fixed inset-0 z-30 bg-black/0"></div>
+
+    <!-- Floating Fairy Sparkles Moving Left and Right -->
+    <div class="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+        <div class="absolute top-1/4 left-10 text-vintageGold/40 text-2xl animate-float-horizontal">✨</div>
+        <div class="absolute top-1/3 right-16 text-softPink/60 text-3xl animate-float-reverse">🌸</div>
+        <div class="absolute top-2/3 left-1/4 text-powderBlue/70 text-2xl animate-float-horizontal">⭐</div>
+        <div class="absolute bottom-1/4 right-1/3 text-vintageGold/50 text-xl animate-float-reverse">✨</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 1: INTERACTIVE INTRO (100vh)          -->
+    <!-- ========================================== -->
+    <section id="page-1" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#F7F2EB] transition-opacity duration-700">
+        
+        <!-- State Hint Message -->
+        <div id="intro-hint" class="text-center mb-8 px-4 transition-all duration-500">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-softPink/60 text-dustyPurple font-serif text-lg tracking-wide border border-vintageGold/30">
+                Click to blow the candle ✨
+            </span>
+        </div>
+
+        <!-- STATE 1: CANDLE -->
+        <div id="candle-wrapper" class="relative cursor-pointer flex flex-col items-center group transition-transform duration-300 hover:scale-105" onclick="handleCandleClick()">
+            <!-- Flame -->
+            <div id="flame" class="candle-flame w-8 h-14 rounded-full animate-flame-flicker relative -mb-3 z-10"></div>
+            <!-- Smoke Effect (Hidden by default) -->
+            <div id="smoke" class="hidden absolute -top-8 w-4 h-12 bg-gray-400/40 rounded-full blur-md animate-ping"></div>
+            
+            <!-- SVG Candle Body -->
+            <svg width="120" height="240" viewBox="0 0 120 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-lg">
+                <path d="M55 20L65 20V35H55V20Z" fill="#2C2627"/>
+                <path d="M25 35C25 35 45 30 60 30C75 30 95 35 95 35V210C95 215 90 220 80 220H40C30 220 25 215 25 210V35Z" fill="#E8D5C4"/>
+                <path d="M25 35C25 35 30 55 40 55C50 55 45 40 55 40C65 40 60 65 75 65C90 65 95 35 95 35" stroke="#D4AF37" stroke-width="2" fill="#DFCA85" fill-opacity="0.5"/>
+                <path d="M35 55V140" stroke="#CBB49E" stroke-width="4" stroke-linecap="round"/>
+                <path d="M60 65V180" stroke="#CBB49E" stroke-width="6" stroke-linecap="round"/>
+                <path d="M80 45V110" stroke="#CBB49E" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- STATE 2: DOVE WITH LETTER -->
+        <div id="dove-wrapper" class="hidden absolute inset-0 m-auto w-fit h-fit cursor-pointer flex flex-col items-center justify-center gap-3 animate-fly-in" onclick="handleDoveClick()">
+            <div class="text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-powderBlue/80 text-dustyPurple font-serif text-sm tracking-wide border border-vintageGold/30 shadow-sm">
+                    A dove brings a letter for you ✨
+                </span>
+            </div>
+            <img src="merpati.png" alt="Burung Merpati" class="w-56 h-auto drop-shadow-xl transition-transform hover:scale-105">
+            <div class="text-center">
+                <span class="px-4 py-1.5 rounded-full bg-powderBlue text-xs font-semibold text-dustyPurple shadow">
+                    Click the dove 🕊️
+                </span>
+            </div>
+        </div>
+
+        <!-- STATE 3 & 4: ENVELOPE / OPEN LETTER -->
+        <div id="envelope-wrapper" class="hidden absolute inset-0 flex items-center justify-center p-4">
+            <!-- Sealed Envelope -->
+            <div id="sealed-envelope" class="cursor-pointer glass-card p-8 rounded-2xl border-2 border-vintageGold/50 max-w-md w-full text-center shadow-2xl transition-transform hover:scale-105" onclick="handleEnvelopeClick()">
+                <div class="w-20 h-20 mx-auto mb-4 bg-softPink rounded-full flex items-center justify-center border border-vintageGold/40 shadow-inner">
+                    <i class="ph ph-envelope-simple-open text-4xl text-vintageGold"></i>
+                </div>
+                <h3 class="font-serif text-2xl text-dustyPurple font-bold mb-2">This Letter is only for You</h3>
+                <p class="text-sm text-gray-600 mb-4">Click the sealed envelope to open it!</p>
+                <div class="inline-block w-8 h-8 rounded-full bg-red-700 border-2 border-vintageGold shadow-md"></div>
+            </div>
+
+            <!-- Opened Letter Content -->
+            <div id="open-letter" class="hidden glass-card p-8 md:p-10 rounded-3xl border-2 border-vintageGold max-w-lg w-full text-center shadow-2xl relative animate-fade-in">
+                <div class="text-vintageGold text-3xl mb-2">✨</div>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-dustyPurple mb-4">Hi! I'm Manda</h2>
+                <p class="font-serif italic text-lg text-vintageGold mb-4">Glad you were here!</p>
+                <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6">
+                    Hi there! How are you doing today? So nice to see you! Welcome to my little digital space where I share my journey in Computer Science, UI/UX design, and IoT innovations. I'm so glad you stopped by—take a look around and enjoy!
+                </p>
+                <button onclick="enterMainPage()" class="w-full py-3.5 px-6 rounded-full bg-vintageGold text-white font-semibold shadow-lg hover:bg-yellow-600 transition-all flex items-center justify-center gap-2 group">
+                    <span>Click to the next page</span>
+                    <i class="ph ph-arrow-right font-bold transition-transform group-hover:translate-x-1"></i>
+                </button>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- FLOATING CANDLE LIGHT DIMMER WIDGET        -->
+    <!-- ========================================== -->
+    <div id="candle-widget" class="fixed right-4 top-1/3 z-50 glass-card p-3 rounded-2xl shadow-xl flex flex-col items-center gap-3 border border-vintageGold/40 hidden">
+        <div class="text-vintageGold text-lg font-semibold flex flex-col items-center">
+            <i class="ph ph-candle text-2xl"></i>
+            <span class="text-[10px] uppercase tracking-wider text-gray-500 font-sans mt-0.5">Lighting</span>
+        </div>
+        
+        <button onclick="adjustBrightness(0.15)" class="w-8 h-8 rounded-full bg-powderBlue/70 hover:bg-powderBlue text-dustyPurple font-bold flex items-center justify-center shadow transition-all active:scale-95" title="Increase Brightness">
+            +
+        </button>
+
+        <div class="w-2 h-20 bg-gray-200 rounded-full overflow-hidden relative">
+            <div id="dimmer-bar" class="w-full bg-vintageGold absolute bottom-0 transition-all duration-300" style="height: 100%;"></div>
+        </div>
+
+        <button onclick="adjustBrightness(-0.15)" class="w-8 h-8 rounded-full bg-softPink/70 hover:bg-softPink text-dustyPurple font-bold flex items-center justify-center shadow transition-all active:scale-95" title="Dim Screen">
+            -
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 2: MAIN PORTFOLIO (LONG SCROLLING)    -->
+    <!-- ========================================== -->
+    <main id="main-portfolio" class="opacity-0 transition-opacity duration-1000">
+
+        <!-- STICKY NAVBAR -->
+        <header class="sticky top-0 z-40 glass-card border-b border-vintageGold/20 px-6 py-4">
+            <div class="max-w-5xl mx-auto flex items-center justify-between">
+                <a href="#" class="font-serif text-2xl font-bold tracking-wide text-dustyPurple flex items-center gap-2">
+                    <span class="text-vintageGold">✨</span> Manda.
+                </a>
+                
+                <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+                    <a href="#about" class="hover:text-vintageGold transition-colors">About</a>
+                    <a href="#projects" class="hover:text-vintageGold transition-colors">Projects</a>
+                    <a href="#activities" class="hover:text-vintageGold transition-colors">Activities</a>
+                    <a href="#contact" class="hover:text-vintageGold transition-colors">Contact</a>
+                </nav>
+
+                <a href="#contact" class="px-4 py-2 rounded-full bg-powderBlue text-dustyPurple text-xs font-semibold hover:bg-vintageGold hover:text-white transition-all shadow-sm">
+                    Let's Connect
+                </a>
+            </div>
+        </header>
+
+        <div class="max-w-5xl mx-auto px-6 py-12 space-y-24">
+
+            <!-- SECTION 1: HERO & ABOUT ME -->
+            <section id="about" class="scroll-mt-28">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="md:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-softPink/80 border border-vintageGold/30 text-xs font-medium text-dustyPurple">
+                            <span>✨</span> Computer Science Student & Tech Designer
+                        </div>
+                        
+                        <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-dustyPurple leading-tight">
+                            Crafting Digital Magic with Code & Intuitive Design
+                        </h1>
+                        
+                        <p class="text-gray-600 text-base md:text-lg leading-relaxed">
+                            Hi! I'm <strong class="text-dustyPurple">Chentya Aulia Trismanda</strong>, a Computer Science student at BINUS University specializing in IoT. I love bridging technology and aesthetics—combining clean front-end engineering, intuitive UI/UX design, and smart hardware integration.
+                        </p>
+
+                        <div class="flex flex-wrap items-center gap-4 pt-2">
+                            <a href="#projects" class="px-6 py-3 rounded-full bg-vintageGold text-white font-medium text-sm shadow-md hover:bg-yellow-600 transition-all flex items-center gap-2">
+                                <span>Explore My Work</span>
+                                <i class="ph ph-arrow-down"></i>
+                            </a>
+                            <a href="#contact" class="px-6 py-3 rounded-full border border-vintageGold text-dustyPurple font-medium text-sm hover:bg-softPink/50 transition-all">
+                                Get in Touch
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-5 flex flex-col items-center justify-center w-full">
+                        <div class="relative p-3 rounded-t-full rounded-b-3xl bg-gradient-to-b from-powderBlue to-softPink gold-border gold-glow flex flex-col items-center">
+                            <div class="w-72 h-96 rounded-t-full rounded-b-2xl overflow-hidden bg-cream relative flex-shrink-0">
+                                <img src="foto-manda.png" alt="Chentya Aulia Trismanda" class="w-full h-full object-cover object-top">
+                            </div>
+
+                            <div class="text-center mt-3 pb-1">
+                                <h3 class="font-serif font-bold text-xl text-dustyPurple">Manda</h3>
+                                <p class="text-xs text-gray-500 font-serif italic">Computer Science • BINUS University</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: STRATEGIC PROFILE & BACKGROUND -->
+            <section class="space-y-8">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-dustyPurple">Strategic Profile</h2>
+                    <p class="text-gray-500 text-sm mt-2">Academic background, core focus areas, and technical toolkit</p>
+                </div>
+
+                <div class="glass-card p-6 md:p-8 rounded-3xl border border-vintageGold/40 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-powderBlue flex items-center justify-center text-vintageGold text-xl">
+                            🎓
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl text-dustyPurple">BINUS University (Bandung)</h3>
+                            <p class="text-xs text-gray-500">Bachelor of Computer Science — IoT Specialization (Semester 5)</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Combining analytical problem-solving with creative design execution. Focused on developing human-centered digital interfaces and smart IoT hardware solutions.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 rounded-3xl border border-vintageGold/30 space-y-4">
+                        <h3 class="font-serif text-xl font-bold text-dustyPurple flex items-center gap-2">
+                            <span>🎯</span> Focus Areas
+                        </h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start gap-2">
+                                <span class="text-vintageGold mt-1">•</span>
+                                <div>
+                                    <strong class="text-dustyPurple">UI/UX & Web Design:</strong> Creating user-friendly mobile and web prototypes with aesthetic precision.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-vintageGold mt-1">•</span>
+                                <div>
+                                    <strong class="text-dustyPurple">Front-End Software Engineering:</strong> Building clean, responsive interfaces and dynamic web apps.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-vintageGold mt-1">•</span>
+                                <div>
+                                    <strong class="text-dustyPurple">Smart IoT Systems:</strong> Hardware integration using sensors, RFID, and microcontrollers.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border border-vintageGold/30 space-y-4">
+                        <h3 class="font-serif text-xl font-bold text-dustyPurple flex items-center gap-2">
+                            <span>🛠️</span> Technical Skills & Tools
+                        </h3>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-xs text-gray-400 font-semibold block mb-1.5 uppercase tracking-wider">Design & Prototyping</span>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-softPink text-xs text-dustyPurple font-medium">Figma</span>
+                                    <span class="px-3 py-1 rounded-full bg-softPink text-xs text-dustyPurple font-medium">Wireframing</span>
+                                    <span class="px-3 py-1 rounded-full bg-softPink text-xs text-dustyPurple font-medium">Design Systems</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="text-xs text-gray-400 font-semibold block mb-1.5 uppercase tracking-wider">Web & Languages</span>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue text-xs text-dustyPurple font-medium">HTML5 / CSS3</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue text-xs text-dustyPurple font-medium">JavaScript</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue text-xs text-dustyPurple font-medium">Python</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue text-xs text-dustyPurple font-medium">C / C++</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue text-xs text-dustyPurple font-medium">Luau</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="text-xs text-gray-400 font-semibold block mb-1.5 uppercase tracking-wider">IoT & Hardware</span>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-xs text-dustyPurple font-medium border border-vintageGold/40">ESP32</span>
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-xs text-dustyPurple font-medium border border-vintageGold/40">Arduino</span>
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-xs text-dustyPurple font-medium border border-vintageGold/40">Raspberry Pi</span>
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-xs text-dustyPurple font-medium border border-vintageGold/40">Sensors & RFID</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: PROJECTS -->
+            <section id="projects" class="scroll-mt-28 space-y-8">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-dustyPurple">Featured Projects</h2>
+                    <p class="text-gray-500 text-sm mt-2">A showcase of IoT hardware, mobile apps, and UI/UX creations</p>
+                </div>
+
+                <!-- Grid 2 Kolom untuk Projects -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Project Card 1: MANSDA -->
+                    <a href="https://www.figma.com/proto/kaGbcZSiuk6JDrt2YkCGPg/MANSDA?node-id=1-4&p=f&t=Z8HBob1nW1QekKlY-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1" target="_blank" class="block group">
+                        <div class="rounded-3xl border border-vintageGold/30 bg-white/70 overflow-hidden shadow-sm hover:shadow-md transition-all group-hover:border-vintageGold">
+                            <div class="h-48 w-full overflow-hidden bg-cream relative border-b border-vintageGold/20">
+                                <img src="mansda-preview.jpg" alt="MANSDA E-Commerce Preview" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs font-semibold tracking-wider text-vintageGold uppercase">UI/UX & WEB DEVELOPMENT</span>
+                                <h3 class="font-serif font-bold text-2xl text-dustyPurple mt-1 mb-2 group-hover:text-vintageGold transition-colors">MANSDA ↗</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                                    An end-to-end e-commerce web design & AI outfit generator featuring a complete shopping flow from collection browsing, smart mix-and-match recommendations, to checkout.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Figma</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">UI/UX</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">AI Stylist</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">E-Commerce</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Project Card 2: HEMY -->
+                    <a href="https://www.figma.com/proto/RmAKqYH2ghZCiNPWfnrcM2/Hemy?node-id=41-865&p=f&t=5IS4Nntumtqtlcs1-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=17%3A375" target="_blank" class="block group">
+                        <div class="rounded-3xl border border-vintageGold/30 bg-white/70 overflow-hidden shadow-sm hover:shadow-md transition-all group-hover:border-vintageGold">
+                            <div class="h-48 w-full overflow-hidden bg-softPink/30 relative border-b border-vintageGold/20">
+                                <img src="hemy-preview.jpg" alt="Hemy Hamster Care App Preview" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs font-semibold tracking-wider text-vintageGold uppercase">MOBILE APP UI/UX</span>
+                                <h3 class="font-serif font-bold text-2xl text-dustyPurple mt-1 mb-2 group-hover:text-vintageGold transition-colors">
+                                    Hemy — Hamster Care Companion ↗
+                                </h3>
+                                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                                    Intuitive mobile application designed to assist pet owners in tracking feeding schedules, health logs, and hamster care tips.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Figma</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">UI/UX</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Prototyping</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Project Card 3: GUYUB -->
+                    <a href="https://www.figma.com/proto/kIG9bHEHAEkLb4tfRvM5Xn/GUYUB?node-id=15-19&p=f&t=in8XzD8sInG2X7oF-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1" target="_blank" class="block group">
+                        <div class="rounded-3xl border border-vintageGold/30 bg-white/70 overflow-hidden shadow-sm hover:shadow-md transition-all group-hover:border-vintageGold">
+                            <div class="h-48 w-full overflow-hidden bg-softPink/30 relative border-b border-vintageGold/20">
+                                <img src="guyub-preview.jpg" alt="GUYUB Mobile App Preview" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs font-semibold tracking-wider text-vintageGold uppercase">MOBILE APP UI/UX</span>
+                                <h3 class="font-serif font-bold text-2xl text-dustyPurple mt-1 mb-2 group-hover:text-vintageGold transition-colors">
+                                    GUYUB — Household Services App ↗
+                                </h3>
+                                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                                    A warm and intuitive mobile app interface designed for booking household services including housekeeping, babysitting, gardening, and vehicle care.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Figma</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">UI/UX</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Mobile Design</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Prototyping</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Project Card 4: IOT BOOK SCANNER -->
+                    <a href="https://drive.google.com/file/d/1ICnkxiUd1gx3W2igcVR0lx6_lTVuo6oF/view?usp=sharing" target="_blank" class="block group">
+                        <div class="rounded-3xl border border-vintageGold/30 bg-white/70 overflow-hidden shadow-sm hover:shadow-md transition-all group-hover:border-vintageGold">
+                            <div class="h-48 w-full overflow-hidden bg-softPink/30 relative border-b border-vintageGold/20">
+                                <img src="iot-book-scanner-preview.jpg" alt="IoT Book Scanner Project Preview" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs font-semibold tracking-wider text-vintageGold uppercase">IOT & HARDWARE</span>
+                                <h3 class="font-serif font-bold text-2xl text-dustyPurple mt-1 mb-2 group-hover:text-vintageGold transition-colors">
+                                    IoT Book Scanner ↗
+                                </h3>
+                                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                                    Smart IoT device designed for automated book scanning and library management using RFID, sensors, and microcontrollers.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">ESP32 / Arduino</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">RFID</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">Sensors</span>
+                                    <span class="px-3 py-1 rounded-full bg-powderBlue/50 text-xs font-medium text-dustyPurple">C++</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                </div> <!-- PENUTUP GRID PROJECTS YANG TADI HILANG -->
+            </section>
+
+            <!-- SECTION 4: CAMPUS & ORGANIZATIONAL ACTIVITIES (MEMBENTANG PENUH KANAN-KIRI) -->
+            <section id="activities" class="scroll-mt-28 space-y-8 w-full">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-dustyPurple">Activities & Experience</h2>
+                    <p class="text-gray-500 text-sm mt-2">Leadership, volunteer initiatives, and community achievements</p>
+                </div>
+
+                <div class="space-y-6 w-full">
+                    
+                    <!-- Activity Card 1: 3D Roblox Dev -->
+                    <div class="glass-card p-6 md:p-8 rounded-3xl border border-vintageGold/30 flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+                        <div class="space-y-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full bg-purple-100 text-[11px] font-semibold text-dustyPurple">3D Design & Roblox Dev</span>
+                                <span class="text-xs text-gray-400">2025 – 2026</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-2xl text-dustyPurple">3D Environment Artist & Level Designer</h3>
+                            <p class="text-xs text-gray-500">Roblox Developer Community ("BINUS Bandung in Roblox")</p>
+                            <p class="text-xs md:text-sm text-gray-600 leading-relaxed pt-1">
+                                Replicated 3D virtual environment models of BINUS Bandung campus (Level 4, stairs, and library interior) for interactive digital exploration.
+                            </p>
+                        </div>
+                        <div class="w-full md:w-72 h-44 rounded-2xl overflow-hidden border border-vintageGold/20 flex-shrink-0 bg-cream">
+                            <img src="roblox.jpeg" alt="Roblox Activity" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Activity Card 2: Sales Bentani -->
+                    <div class="glass-card p-6 md:p-8 rounded-3xl border border-vintageGold/30 flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+                        <div class="space-y-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full bg-yellow-100 text-[11px] font-semibold text-dustyPurple border border-vintageGold/30">Top Sales Award 🏆</span>
+                                <span class="text-xs text-gray-400">May 2024 – Jul 2024</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-2xl text-dustyPurple">Sales Team Lead (Internship)</h3>
+                            <p class="text-xs text-gray-500">Bentani Hotel & Residence • Cirebon</p>
+                            <p class="text-xs md:text-sm text-gray-600 leading-relaxed pt-1">
+                                Led a field sales team marketing pastry products via direct-selling strategies. Managed daily sales operations and customer communications, earning the Top Sales Award.
+                            </p>
+                        </div>
+                        <div class="w-full md:w-72 h-44 rounded-2xl overflow-hidden border border-vintageGold/20 flex-shrink-0 bg-cream">
+                            <img src="bentani.jpg" alt="Sales Bentani Activity" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Activity Card 3: Learning Development Staff BNEC -->
+                    <div class="glass-card p-6 md:p-8 rounded-3xl border border-vintageGold/30 flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+                        <div class="space-y-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full bg-powderBlue text-[11px] font-semibold text-dustyPurple">Organization</span>
+                                <span class="text-xs text-gray-400">2025</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-2xl text-dustyPurple">Learning Development Staff BNEC</h3>
+                            <p class="text-xs text-gray-500">Bina Nusantara English Club (BNEC)</p>
+                            <p class="text-xs md:text-sm text-gray-600 leading-relaxed pt-1">
+                                Responsible as a staff member in the Learning and Management division at BINUS English Club (BNEC) for the 2024–2025 period. Actively involved in designing program curricula, managing the operation of English training activities, and monitoring members' progress throughout the one-year management period to ensure the organization’s learning standards are met.
+                            </p>
+                        </div>
+                        <div class="w-full md:w-72 h-44 rounded-2xl overflow-hidden border border-vintageGold/20 flex-shrink-0 bg-cream">
+                            <img src="BNEC.jpeg" alt="BNEC Activity" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Activity Card 4: TFI Volunteer -->
+                    <div class="glass-card p-6 md:p-8 rounded-3xl border border-vintageGold/30 flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+                        <div class="space-y-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full bg-softPink text-[11px] font-semibold text-dustyPurple">Volunteer & Social Impact</span>
+                                <span class="text-xs text-gray-400">Sep 2025</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-2xl text-dustyPurple">Teach For Indonesia (TFI) Volunteer</h3>
+                            <p class="text-xs text-gray-500">BINUS University • Panti Asuhan Cahaya Kasih Bandung</p>
+                            <p class="text-xs md:text-sm text-gray-600 leading-relaxed pt-1">
+                                Spearheaded social impact initiatives at Panti Asuhan Cahaya Kasih Bandung. Demonstrated eco-enzyme production from organic waste and probiotic beverage creation.
+                            </p>
+                        </div>
+                        <div class="w-full md:w-72 h-44 rounded-2xl overflow-hidden border border-vintageGold/20 flex-shrink-0 bg-cream">
+                            <img src="panti.jpg" alt="TFI Volunteer Activity" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 5: CONTACT & FOOTER -->
+            <section id="contact" class="scroll-mt-28 w-full max-w-4xl mx-auto">
+                <div class="glass-card p-8 md:p-10 rounded-3xl border border-vintageGold gold-glow text-center space-y-6 bg-white/80">
+                    <div class="text-3xl">✨</div>
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-dustyPurple">
+                        Let's Create Something<br>Magical Together!
+                    </h2>
+                    <p class="text-gray-600 text-sm max-w-xl mx-auto leading-relaxed">
+                        I am open for internships, collaborative projects, and tech opportunities. Feel free to download my CV or connect with me directly!
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto pt-4">
+                        <a href="[BARU]ChentyaAuliaTrismanda_CV.pdf" target="_blank" class="p-4 rounded-2xl bg-powderBlue/40 border border-powderBlue hover:bg-powderBlue/70 transition-all flex flex-col items-center justify-center gap-2 group">
+                            <span class="text-xl">📄</span>
+                            <span class="text-xs font-semibold text-dustyPurple">Download CV</span>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/chentyaauliatrismanda" target="_blank" class="p-4 rounded-2xl bg-softPink/40 border border-softPink hover:bg-softPink/70 transition-all flex flex-col items-center justify-center gap-2 group">
+                            <span class="text-xl">💼</span>
+                            <span class="text-xs font-semibold text-dustyPurple">LinkedIn Profile</span>
+                        </a>
+
+                        <a href="mailto:chentya.trismanda@binus.ac.id" class="p-4 rounded-2xl bg-yellow-50 border border-vintageGold/30 hover:bg-yellow-100 transition-all flex flex-col items-center justify-center gap-2 group">
+                            <span class="text-xl">✉️</span>
+                            <span class="text-xs font-semibold text-dustyPurple">Email Me</span>
+                        </a>
+
+                        <a href="https://github.com/trsmanda" target="_blank" class="p-4 rounded-2xl bg-gray-100 border border-gray-200 hover:bg-gray-200 transition-all flex flex-col items-center justify-center gap-2 group">
+                            <span class="text-xl">🐙</span>
+                            <span class="text-xs font-semibold text-dustyPurple">GitHub</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-8 border-t border-vintageGold/20 text-xs text-gray-400 font-serif italic">
+                        ✨ © 2026 Chentya Aulia Trismanda | Built with Magic & Code ✨
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- JavaScript State Logic & Interactions -->
+    <script>
+        function handleCandleClick() {
+            const flame = document.getElementById('flame');
+            const smoke = document.getElementById('smoke');
+            const candleWrapper = document.getElementById('candle-wrapper');
+            const doveWrapper = document.getElementById('dove-wrapper');
+            const hint = document.getElementById('intro-hint');
+
+            flame.classList.add('hidden');
+            smoke.classList.remove('hidden');
+            hint.classList.add('hidden'); 
+
+            setTimeout(() => {
+                candleWrapper.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    candleWrapper.classList.add('hidden');
+                    doveWrapper.classList.remove('hidden');
+                }, 400);
+            }, 800);
+        }
+
+        function handleDoveClick() {
+            const doveWrapper = document.getElementById('dove-wrapper');
+            const envelopeWrapper = document.getElementById('envelope-wrapper');
+            const hint = document.getElementById('intro-hint');
+
+            hint.style.opacity = '0';
+
+            doveWrapper.classList.add('opacity-0');
+            setTimeout(() => {
+                doveWrapper.classList.add('hidden');
+                envelopeWrapper.classList.remove('hidden');
+            }, 500);
+        }
+
+        function handleEnvelopeClick() {
+            const sealedEnvelope = document.getElementById('sealed-envelope');
+            const openLetter = document.getElementById('open-letter');
+
+            sealedEnvelope.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                sealedEnvelope.classList.add('hidden');
+                openLetter.classList.remove('hidden');
+            }, 400);
+        }
+
+        function enterMainPage() {
+            const page1 = document.getElementById('page-1');
+            const mainPortfolio = document.getElementById('main-portfolio');
+            const candleWidget = document.getElementById('candle-widget');
+
+            page1.classList.add('opacity-0');
+            setTimeout(() => {
+                page1.classList.add('hidden');
+                mainPortfolio.classList.remove('opacity-0');
+                candleWidget.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 700);
+        }
+
+        let currentOpacity = 0;
+
+        function adjustBrightness(change) {
+            currentOpacity = Math.max(0, Math.min(0.7, currentOpacity - change));
+            
+            const overlay = document.getElementById('ambient-overlay');
+            const bar = document.getElementById('dimmer-bar');
+
+            overlay.style.backgroundColor = `rgba(0, 0, 0, ${currentOpacity})`;
+            
+            const fillPercentage = ((0.7 - currentOpacity) / 0.7) * 100;
+            bar.style.height = `${fillPercentage}%`;
+        }
+    </script>
+</body>
+</html>
